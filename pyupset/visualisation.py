@@ -173,13 +173,17 @@ class UpSetPlot():
         fig_rows = self.rows + self.rows * 4
 
         gs_top = gridspec.GridSpecFromSubplotSpec(fig_rows, fig_cols, subplot_spec=topgs, wspace=.1, hspace=.2)
+
+
         setsize_w, setsize_h = 3, self.rows
         tablesize_w, tablesize_h = setsize_w + 2, self.rows
         intmatrix_w, intmatrix_h = tablesize_w + self.cols, self.rows
         intbars_w, intbars_h = tablesize_w + self.cols, self.rows * 4
-        ax_setsize = plt.subplot(gs_top[-1:-setsize_h, 0:setsize_w])
-        ax_tablenames = plt.subplot(gs_top[-1:-tablesize_h, setsize_w:tablesize_w])
-        ax_intmatrix = plt.subplot(gs_top[-1:-intmatrix_h, tablesize_w:intmatrix_w])
+        print(gs_top[-1:-2:-1,0:1])
+        print(gs_top[-1:-setsize_h:-1, 0:setsize_w])
+        ax_setsize = plt.subplot(gs_top[-1:-setsize_h:-1, 0:setsize_w])
+        ax_tablenames = plt.subplot(gs_top[-1:-tablesize_h:-1, setsize_w:tablesize_w])
+        ax_intmatrix = plt.subplot(gs_top[-1:-intmatrix_h:-1, tablesize_w:intmatrix_w])
         ax_intbars = plt.subplot(gs_top[:self.rows * 4 - 1, tablesize_w:intbars_w])
 
         add_ax = []
@@ -568,7 +572,7 @@ class DataExtractor:
             for s in out_sets:
                 exclusive_intersection = exclusive_intersection.difference(pd.Index(self.df_dict[s][
                     self.unique_keys]))
-            final_df = self.df_dict[seed].set_index(pd.Index(self.df_dict[seed][self.unique_keys])).ix[
+            final_df = self.df_dict[seed].set_index(pd.Index(self.df_dict[seed][self.unique_keys])).loc[
                 exclusive_intersection].reset_index(drop=True)
             inters_dict[in_sets] = final_df
 
@@ -629,16 +633,16 @@ class DataExtractor:
 
 
 if __name__ == '__main__':
-    from pickle import load
-
-    f = open('../data/test_data_dict.pckl', 'rb')
-    data_dict = load(f)
-    f.close()
-    # df1 = pd.DataFrame(index=list('abcd'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(4, 3)).reset_index()
-    # df2 = pd.DataFrame(index=list('abxyz'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(5, 3)).reset_index()
-    # df3 = pd.DataFrame(index=list('ghxde'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(5, 3)).reset_index()
-    # data_dict = {'df1':df1, 'df2':df2, 'df3':df3}
-    d = plot(data_dict, unique_keys=['title'],
+    # from pickle import load
+    #
+    # f = open('../src/data/test_data_dict.pckl', 'rb')
+    # data_dict = load(f)
+    # f.close()
+    df1 = pd.DataFrame(index=list('abcd'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(4, 3)).reset_index()
+    df2 = pd.DataFrame(index=list('abxyz'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(5, 3)).reset_index()
+    df3 = pd.DataFrame(index=list('ghxde'), columns=('rating_std', 'rating_avg', 'views'), data=np.random.rand(5, 3)).reset_index()
+    data_dict = {'df1':df1, 'df2':df2, 'df3':df3}
+    d = plot(data_dict, unique_keys=['index'],
              inters_size_bounds=(2, 20),
          query=[('action',), ('romance', 'action', 'war', 'adventure'), ('romance', 'adventure')],
          additional_plots=[{'kind': 'scatter',
